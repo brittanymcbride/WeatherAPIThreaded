@@ -1,3 +1,14 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Wed Jul 28 20:58:09 2021
+
+Using the MetaWeather API ( https://www.metaweather.com/api/) Display the
+average max temperature in Salt Lake City, Los Angeles, and Boise for a 6 day
+forecast. In python, use threads and software development best practices to 
+make each of the 3 api requests concurrently.
+
+@author: Brittany McBride
+"""
 import requests
 import concurrent.futures
 import statistics
@@ -7,7 +18,9 @@ from json.decoder import JSONDecodeError
 def get_average_max_temp(weatherUrl, timeout=10):
     try:
         response = requests.get(url=weatherUrl, timeout=timeout)
-        
+        response.raise_for_status()
+    except requests.exceptions.HTTPError as err:
+        print(err)
     except requests.exceptions.HTTPError as err_h:
         return "An Http Error occurred:" + repr(err_h)
     except requests.exceptions.ConnectionError as err_c:
