@@ -51,8 +51,7 @@ def get_average_max_temp(weatherUrl, timeout=10):
 #MetaWeather API URLs
 urls = ['https://www.metaweather.com/api/location/2487610/', 
         'https://www.metaweather.com/api/location/2442047/', 
-        'https://www.metaweather.com/api/location/2366355/',
-        'http://hub.dummyapis.com/statuscode/400']
+        'https://www.metaweather.com/api/location/2366355/']
 
 
 with concurrent.futures.ThreadPoolExecutor() as executor:
