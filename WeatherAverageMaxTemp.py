@@ -18,9 +18,6 @@ from json.decoder import JSONDecodeError
 def get_average_max_temp(weatherUrl, timeout=10):
     try:
         response = requests.get(url=weatherUrl, timeout=timeout)
-        response.raise_for_status()
-    except requests.exceptions.HTTPError as err:
-        print(err)
     except requests.exceptions.HTTPError as err_h:
         return "An Http Error occurred:" + repr(err_h)
     except requests.exceptions.ConnectionError as err_c:
@@ -29,23 +26,28 @@ def get_average_max_temp(weatherUrl, timeout=10):
         return "A Timeout Error occurred:" + repr(err_t)
     except requests.exceptions.RequestException as err_:
         return "An Unknown Error occurred" + repr(err_)
-    else:   
-        try: 
-            weather_=response.json()
-        except JSONDecodeError as e_:
-            return "An Unknown Error occurred" + repr(e_)
+    else:  
+        try:
+              response.raise_for_status()
+        except requests.exceptions.HTTPError as err_s:
+            return "The status is not 2xx:" + repr(err_s)
         else:
-        #check that there is at least 1 day of temperatures
-         assert len(weather_['consolidated_weather']) >= 1
-         
-         maxtemps = [i['max_temp'] for i in weather_['consolidated_weather']]
-         
-         # Validate that only numbers from MaxTemps used
-         check_temps = [x for x in maxtemps if isinstance(x, (float,int))]
-         
-         #Calculate Average of Max Temperatures
-         average_ = statistics.mean(check_temps)
-        
+            try: 
+                weather_=response.json()
+            except JSONDecodeError as e_:
+                return "An Unknown Error occurred" + repr(e_)
+            else:
+            #check that there is at least 1 day of temperatures
+             assert len(weather_['consolidated_weather']) >= 1
+             
+             maxtemps = [i['max_temp'] for i in weather_['consolidated_weather']]
+             
+             # Validate that only numbers from MaxTemps used
+             check_temps = [x for x in maxtemps if isinstance(x, (float,int))]
+             
+             #Calculate Average of Max Temperatures
+             average_ = statistics.mean(check_temps)
+            
          
     return weather_['title'] + " Average Max Temp: " + str(round(average_, 2))
 
